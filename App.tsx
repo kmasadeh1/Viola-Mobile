@@ -1,23 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 
-// --- IMPORT SCREENS ---
-// Ensure all these files are in the same directory or adjust paths accordingly
-import HomeScreen from './HomeScreen';
-import LoginScreen from './LoginScreen';
-import ParentDashboardScreen from './ParentDashboardScreen';
-import TeacherDashboardScreen from './TeacherDashboardScreen';
-import AdminDashboardScreen from './AdminDashboardScreen';
-import ScheduleScreen from './ScheduleScreen';
-import BusScreen from './BusScreen';
-import ShopScreen from './ShopScreen';
-import LunchScreen from './LunchScreen';
-import GalleryScreen from './GalleryScreen';
-import CheckoutScreen from './CheckoutScreen';
+// --- CORRECT IMPORT PATHS ---
+// Since all files are now directly in the 'app/' folder, we import them from there.
+// ... keep React imports ...
+
+// --- CORRECT IMPORTS ---
+import AdminDashboardScreen from './app/AdminDashboardScreen'; // Updated path
+import BusScreen from './app/BusScreen';
+import CheckoutScreen from './app/CheckoutScreen';
+import GalleryScreen from './app/GalleryScreen';
+import HomeScreen from './app/HomeScreen';
+import LoginScreen from './app/LoginScreen';
+import LunchScreen from './app/LunchScreen';
+import ParentDashboardScreen from './app/ParentDashboardScreen';
+import ScheduleScreen from './app/ScheduleScreen';
+import ShopScreen from './app/ShopScreen';
+import TeacherDashboardScreen from './app/TeacherDashboardScreen'; // Updated path
+
+// ... rest of the code remains the same ...
 
 // --- DEFINE STACK PARAMS ---
 export type RootStackParamList = {
@@ -40,7 +45,7 @@ export default function App() {
   const [initialRoute, setInitialRoute] = useState<keyof RootStackParamList>('Home');
   const [loading, setLoading] = useState(true);
 
-  // Optional: Check if user is already logged in to redirect them immediately
+  // Check if user is already logged in
   useEffect(() => {
     const checkSession = async () => {
       try {
@@ -49,12 +54,12 @@ export default function App() {
         const teacherEmail = await AsyncStorage.getItem('viola_current_teacher_email');
         const adminPreview = await AsyncStorage.getItem('viola_preview_student_id');
 
+        // Logic to decide which screen to show first
         if (adminPreview || studentId) {
           setInitialRoute('ParentDashboard');
         } else if (teacherEmail) {
           setInitialRoute('TeacherDashboard');
         } else if (userJson) {
-          // If using a generic user object structure
           const user = JSON.parse(userJson);
           if (user.role === 'admin') setInitialRoute('AdminDashboard');
           else if (user.role === 'teacher') setInitialRoute('TeacherDashboard');
@@ -83,11 +88,10 @@ export default function App() {
       <Stack.Navigator 
         initialRouteName={initialRoute}
         screenOptions={{
-          headerShown: false, // We created custom headers in each screen
+          headerShown: false,
           cardStyle: { backgroundColor: '#f0f2f5' }
         }}
       >
-        {/* Public Screens */}
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
 
